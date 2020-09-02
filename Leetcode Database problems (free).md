@@ -1,4 +1,4 @@
-Leetcode Database problems (free)
+# Leetcode Database problems (free)
 
 ## Combine two tables (Easy)
 
