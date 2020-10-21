@@ -12,6 +12,8 @@ This review is mainly about the 2nd method: technical questions, particularly SQ
 
 I'm writing this review with the goal of becoming more proficient in SQL, at a level where I understand how SQL and databases work under the hood and begin to approach optimization, instead of just focusing on making queries work without error.
 
+https://stackoverflow.com/questions/354070/sql-join-where-clause-vs-on-clause
+
 ## Interesting notes about joining tables
 
 the usual way of joining tables is:
