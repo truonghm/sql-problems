@@ -38,7 +38,7 @@ on table1.key1 = table2.key2
     and table2.cond2 > 100
 ```
 
-The above query not only specifes which columns are use to match, but also which **rows** will be joined: in table1, only rows where cond1 = 'x' are joined, and in table2, only rows where cond2 > 100 are joined.
+The above query specifies not only which columns are used as key to join, but also which **rows** will be joined: in table1, only rows where cond1 = 'x' are joined, and in table2, only rows where cond2 > 100 are joined.
 
 Note that this is different from using the `WHERE` clause:
 
