@@ -6,7 +6,7 @@ In past 2 years, particularly during the months I have been unemployed, I have r
 
 1. **Assignment/Testing**: Applicant is assigned a data analysis problem, which can either be done at home and submit before given deadline, or done on-site. The former is more common. Applicant can choose whichever technologies they are comfortable with, as long as they can produce result. Methodology and domain knowledge are often valued more.
 
-2. **Technical questions** given during interviews, which cover various topics: probability, statistics, SQL, Python, R, etc. You can often code on paper.
+2. **Technical questions** given during interviews, which cover various topics: probability, statistics, SQL, Python, R, etc. You may be required to write your code on paper.
 
 This review is mainly about the 2nd method: technical questions, particularly SQL questions. I admit that I lack a formal education in database management/ETL, and thus heavily, and also willingly depend on Google and code completion instead of memorization. As such SQL questions can be scary. 
 
