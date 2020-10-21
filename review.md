@@ -69,12 +69,12 @@ where condition
 This is particularly useful when you want to compare e.g. rates from a previous period:
 
 ```sql
-select t1.*, t2.[%RFR] as [%RFR_LM]
+select t1.*, t2.[RFR] as [RFR_LM]
 from table t1, table t2
 where t1.Due_Date = convert(varchar, dateadd(month, -1, CONVERT(DATETIME,t2.DUE_DATE,112)), 112)
 ```
 
-In this query I use the **Due_Date** column as the key to join. Current date is matched with the same date from last month (see the `DATEADD` function) to return the roll-forawrd rate from last month. A new column called **%RFR_LM** (roll forward rate last month) is created, which can then be compared with the already-existed **%RFR** column.
+In this query I use the **Due_Date** column as the key to join. Current date is matched with the same date from last month (see the `DATEADD` function) to return the roll-forawrd rate from last month. A new column called **RFR_LM** (roll forward rate last month) is created, which can then be compared with the already-existed **RFR** column.
 
 ### UPDATE & JOIN
 
