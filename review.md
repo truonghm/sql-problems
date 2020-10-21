@@ -27,7 +27,7 @@ on table1.key1 = table2.key2
 ```
 
 Notice that the `on` clause specifies which columns on both table to match with, hence the `=` operator. This is the standward way to join.
-However, we can also it like this:
+However, we can also do it like this:
 
 ```sql
 select *
