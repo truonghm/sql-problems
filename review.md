@@ -2,7 +2,7 @@
 
 ## Introduction
 
-In past 2 years, particularly during the months I have been unemployed, I have realized that the hiring process for data analyst role is becoming increasingly technical. There are mainly two ways to test the applicant technical ability that I have encountered:
+In past 2 years, particularly during the months I was unemployed, I have realized that the hiring process for data analyst role is becoming increasingly technical. There are mainly two ways to test the applicant technical ability that I have encountered:
 
 1. **Assignment/Testing**: Applicant is assigned a data analysis problem, which can either be done at home and submit before given deadline, or done on-site. The former is more common. Applicant can choose whichever technologies they are comfortable with, as long as they can produce result. Methodology and domain knowledge are often valued more.
 
@@ -12,8 +12,7 @@ This review is mainly about the 2nd method: technical questions, particularly SQ
 
 I'm writing this review with the goal of becoming more proficient in SQL, at a level where I understand how SQL and databases work under the hood and begin to approach optimization, instead of just focusing on making queries work without error.
 
-https://stackoverflow.com/questions/354070/sql-join-where-clause-vs-on-clause
-
+---
 ## Interesting notes about joining tables
 
 ### Specifying conditions when joining
@@ -76,6 +75,12 @@ where t1.Due_Date = convert(varchar, dateadd(month, -1, CONVERT(DATETIME,t2.DUE_
 
 In this query I use the **Due_Date** column as the key to join. Current date is matched with the same date from last month (see the `DATEADD` function) to return the roll-forawrd rate from last month. A new column called **RFR_LM** (roll forward rate last month) is created, which can then be compared with the already-existed **RFR** column.
 
-### UPDATE & JOIN
+## CTEs
 
+From Microsoft's documentation, CTEs can be used to:
 
+> A CTE can be used to:
+- Create a recursive query. For more information, see Recursive Queries Using Common Table Expressions.
+- Substitute for a view when the general use of a view is not required; that is, you do not have to store the definition in metadata.
+- Enable grouping by a column that is derived from a scalar subselect, or a function that is either not deterministic or has external access.
+- Reference the resulting table multiple times in the same statement.
