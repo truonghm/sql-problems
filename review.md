@@ -79,8 +79,9 @@ In this query I use the **Due_Date** column as the key to join. Current date is 
 
 From Microsoft's documentation, CTEs can be used to:
 
-> A CTE can be used to:
-> - Create a recursive query. For more information, see Recursive Queries Using Common Table Expressions.
+> - Create a recursive query. For more information, see [Recursive Queries Using Common Table Expressions](https://docs.microsoft.com/en-us/previous-versions/sql/sql-server-2008-r2/ms186243(v=sql.105)).
 > - Substitute for a view when the general use of a view is not required; that is, you do not have to store the definition in metadata.
 > - Enable grouping by a column that is derived from a scalar subselect, or a function that is either not deterministic or has external access.
 > - Reference the resulting table multiple times in the same statement.
+
+
