@@ -75,6 +75,10 @@ where t1.Due_Date = convert(varchar, dateadd(month, -1, CONVERT(DATETIME,t2.DUE_
 
 In this query I use the **Due_Date** column as the key to join. Current date is matched with the same date from last month (see the `DATEADD` function) to return the roll-forawrd rate from last month. A new column called **RFR_LM** (roll forward rate last month) is created, which can then be compared with the already-existed **RFR** column.
 
+## Window functions
+
+
+
 ## CTEs
 
 From Microsoft's documentation, CTEs can be used to:
