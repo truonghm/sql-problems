@@ -89,7 +89,7 @@ In this query I use the **Due_Date** column as the key to join. Current date is 
 | 2021-06          | D      | 5            |
 | 2021-07          | D      | 5            |
 
-Supposely we are given the first 2 columns, and has to create the third one called **no_of_change** which indicates the number of time the values changes over time (**day**).
+Supposely we are given the first 2 columns, which show the log of agencies that a contract is allocated to for debt collection, and has to create the third one called **no_of_change** which indicates the number of time the values changes over time (**day**).
 
 This task requires the use of `DENSE_RANK()`, `ROW_NUMBER()` and `MIN()` as follows:
 
@@ -114,7 +114,11 @@ insert into #value_change values('2021-06','D')
 
 - There are several things we have to be aware of in this problem: 
     
-    1. 
+    1. First ocurrance of any agency is counted as 1.
+    2. We have to differentiate streaks of occurance of an agency. For example, C was allocated consecutively 2 times, the first time from 2021-02 to 2021-04 and the second time in 2021-06. During the first time, the count remains the same at 3, and in the second time, the count changes, even though the contract goes to an agency that was allocated to before.
+
+
+
 
 ## CTEs
 
