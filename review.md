@@ -4,7 +4,7 @@
 
 In past 2 years, particularly during the months I was unemployed, I have realized that the hiring process for data analyst role is becoming increasingly technical. There are mainly two ways to test the applicant technical ability that I have encountered:
 
-1. **Assignment/Testing**: Applicant is assigned a data analysis problem, which can either be done at home and submit before given deadline, or done on-site. The former is more common. Applicant can choose whichever technologies they are comfortable with, as long as they can produce result. Methodology and domain knowledge are often valued more.
+1. **Assignment/Testing**: Applicant is assigned a data analysis problem, which can either be done at home and submitted before a given deadline, or done on-site. The former is more common. Applicant can choose whichever technologies they are comfortable with, as long as they can produce result. Methodology and domain knowledge are often valued more.
 
 2. **Technical questions** given during interviews, which cover various topics: probability, statistics, SQL, Python, R, etc. You may be required to write your code on paper.
 
@@ -75,9 +75,46 @@ where t1.Due_Date = convert(varchar, dateadd(month, -1, CONVERT(DATETIME,t2.DUE_
 
 In this query I use the **Due_Date** column as the key to join. Current date is matched with the same date from last month (see the `DATEADD` function) to return the roll-forawrd rate from last month. A new column called **RFR_LM** (roll forward rate last month) is created, which can then be compared with the already-existed **RFR** column.
 
-## Window functions
+## Some problems related to window functions
 
+### Count the number of time a value changes
 
+| allocation_month | agency | no_of_change |
+|------------------|--------|--------------|
+| 2021-01          | A      | 1            |
+| 2021-02          | B      | 2            |
+| 2021-03          | C      | 3            |
+| 2021-04          | C      | 3            |
+| 2021-05          | B      | 4            |
+| 2021-06          | D      | 5            |
+| 2021-07          | D      | 5            |
+
+Supposely we are given the first 2 columns, and has to create the third one called **no_of_change** which indicates the number of time the values changes over time (**day**).
+
+This task requires the use of `DENSE_RANK()`, `ROW_NUMBER()` and `MIN()` as follows:
+
+- First, let's create a table with the 2 first columns:
+
+```sql
+create Table #value_change
+( 
+allocation_month varchar(8) null ,
+agency varchar(1) null
+)
+
+-- Inserting Records
+insert into #value_change values('2021-00','A')
+insert into #value_change values('2021-01','B')
+insert into #value_change values('2021-02','C')
+insert into #value_change values('2021-03','C')
+insert into #value_change values('2021-04','B')
+insert into #value_change values('2021-05','D')
+insert into #value_change values('2021-06','D')
+```
+
+- There are several things we have to be aware of in this problem: 
+    
+    1. 
 
 ## CTEs
 
