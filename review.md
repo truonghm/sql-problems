@@ -13,7 +13,7 @@ This review is mainly about the 2nd method: technical questions, particularly SQ
 I'm writing this review with the goal of becoming more proficient in SQL, at a level where I understand how SQL and databases work under the hood and begin to approach optimization, instead of just focusing on making queries work without error.
 
 ---
-## Interesting notes about joining tables
+## Some notes on joining tables
 
 ### Specifying conditions when joining
 the usual way of joining tables is:
@@ -233,14 +233,103 @@ from (
 order by allocation_month
 ```
 
-### 
-## CTEs
+### Cumulative sums
 
-From Microsoft's documentation, CTEs can be used to:
+Supposedly we have a table called __transactions__ with transaction dates along with the total transaction value of that date meaning that the transaction dates are unique).
 
-> - Create a recursive query. For more information, see [Recursive Queries Using Common Table Expressions](https://docs.microsoft.com/en-us/previous-versions/sql/sql-server-2008-r2/ms186243(v=sql.105)).
-> - Substitute for a view when the general use of a view is not required; that is, you do not have to store the definition in metadata.
-> - Enable grouping by a column that is derived from a scalar subselect, or a function that is either not deterministic or has external access.
-> - Reference the resulting table multiple times in the same statement.
+| transaction_date | daily_revenue |
+|------------------|---------------|
+| 2021-04-01       | 1000          |
+| 2021-04-02       | 2000          |
+| 2021-04-03       | 1500          |
+| 2021-04-04       | 500           |
+| 2021-04-05       | 800           |
+| 2021-04-06       | 1300          |
+| 2021-04-07       | -2000         |
+| 2021-04-08       | 100           |
+| 2021-04-09       | 5000          |
+
+The task given is to create a 3rd column with cumulative revenue of April 2021. This can be accomplished in 2 ways:
+
+__Solution 1__: Using windows function:
+
+```sql
+SELECT 
+    transaction_date, 
+    SUM(daily_revenue) OVER (ORDER BY transaction_date ASC) as mtd_revenue
+FROM
+    transactions 
+ORDER BY 
+    date ASC
+```
+
+Note that is is the preferred solution, as it's more efficient and shorter.
+
+__Solution 2__: Using join:
+
+```sql
+SELECT 
+    a.transaction_date, 
+    SUM(b.daily_revenue) as mtd_revenue
+FROM
+    transactions a
+JOIN transactions b 
+ON a.date >= b.date 
+GROUP BY 
+    a.transaction_date 
+ORDER BY 
+    a.transaction_date
+```
+
+Note that in the above solution, the condition for joining in the `ON` clause uses _equal or greater than_ comparison, as not only _equal_ comparison is legal when joining tables.
+
+## Other interesting problems
+
+### Find best previous performing month and fetch the same day as today from that month
+
+Recently I was assigned the following task: The performance report at my company (that I created and maintain) used to show comparison of current month and the previous month. However, as certain months are affected by holidays, it makes more sense to compare the current month with the best performing month in the past. The task can be broken down into 2 parts:
+
+1. Find the best previous performing month, e.g. December 2020, and compare with the current month, e.g. April 2021
+2. Besides total monthly numbers, we also show daily numbers. This mean that we need to fetch data for December 7, 2021, assuming that the current reporting date is April 7, 2021, and compare those 2 dates.
+
+Assuming the __report__ table is as below:
 
 
+
+Here's my solution:
+
+```sql
+DECLARE @max_report_date varchar(8) = (select max(report_date) from report)
+DECLARE @max_report_date_bom varchar(8) = left(@max_report_date, 6) + '01'
+DECLARE @max_value_date varchar(8) = (
+			select top 1 report_date
+			from (
+				select 
+					report_date,
+					isnull(sum(mtd_pmt),0) as payment_amt
+				from report
+				where Report_date in (
+								select left(report_date, 4) + substring(report_date, 5, 2) + right('0'+ cast(max(cast(right(report_date, 2) as int)) as varchar(max)), 2)
+								from report
+								where left(report_date, 6) != left(@max_report_date, 6)
+								group by left(report_date, 4), substring(report_date, 5, 2)
+										)
+				and mtd_pmt is not null
+				group by report_date
+				) x
+			order by payment_amt DESC)
+DECLARE @max_value_date_bom varchar(8) = left(@max_value_date, 6) + '01'
+DECLARE @MONTH_DIFF int = DATEDIFF(MONTH, convert(date, @max_value_date_bom, 112), convert(date, @max_report_date_bom, 112))
+DECLARE @compare_date varchar(8) = (select convert(varchar, dateadd(m, @MONTH_DIFF*(-1), convert(date, @max_report_date, 112)), 112))
+
+select @compare_date
+```
+
+The steps in the above query can be explained as follows:
+
+1. Find the latest reporting date in the __report__ table (`max_report_date`)
+2. Get the date at the beginning of the reporting month (BOM) (`max_report_date_bom`)
+3. Find the month with the highest end-of-month total revenue; the result would be the last day of that month (because the last day would have the end-of-month total revenue)
+4. Find the BOM date of the best performing previous month
+5. Calculate the difference in months between the BOM of the current reporting month and the BOM of the best performing previous month
+6. Substract the difference in months as calculated above from the last reporting date to get the corresponding date from the best performing previous month
