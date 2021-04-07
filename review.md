@@ -79,7 +79,7 @@ In this query I use the **Due_Date** column as the key to join. Current date is 
 
 ### Count the number of time a value changes
 
-| allocation_month | agency | no_of_change |
+| allocation_month | agency | count_change |
 |------------------|--------|--------------|
 | 2021-01          | A      | 1            |
 | 2021-02          | B      | 2            |
@@ -93,9 +93,10 @@ Supposely we are given the first 2 columns, which show the log of agencies that 
 
 This task requires the use of `DENSE_RANK()`, `ROW_NUMBER()` and `MIN()` as follows:
 
-- Let's create a table with the 2 first columns:
+1. Let's create a table with the 2 first columns:
 
 ```sql
+drop table if exists #value_change
 create Table #value_change
 ( 
 allocation_month varchar(8) null ,
@@ -107,60 +108,132 @@ insert into #value_change values('2021-00','A')
 insert into #value_change values('2021-01','B')
 insert into #value_change values('2021-02','C')
 insert into #value_change values('2021-03','C')
-insert into #value_change values('2021-04','B')
-insert into #value_change values('2021-05','D')
-insert into #value_change values('2021-06','D')
+insert into #value_change values('2021-04','C')
+insert into #value_change values('2021-05','B')
+insert into #value_change values('2021-06','C')
+insert into #value_change values('2021-07','D')
+insert into #value_change values('2021-08','D')
 ```
 
-- There are several things we have to be aware of in this problem: 
+2. There are several things we have to be aware of in this problem: 
     
-    1. First ocurrance of any agency is counted as 1.
-    2. We have to differentiate streaks of occurance of an agency. For example, C was allocated consecutively 2 times, the first time from 2021-02 to 2021-04 and the second time in 2021-06. During the first time, the count remains the same at 3, and in the second time, the count changes, even though the contract goes to an agency that was allocated to before.
-    3. From the above observation, we can try isolate each continuous streak of an agency with order, then use `DENSE_RANK()` to rank them. Note that we can't use `RANK()` as the ranking wouldn't be consecutive.
+    - First ocurrance of any agency is counted as 1.
+    - We have to differentiate streaks of occurance of an agency. For example, C was allocated consecutively 2 times, the first time from 2021-02 to 2021-04 and the second time in 2021-06. During the first time, the count remains the same at 3, and in the second time, the count changes, even though the contract goes to an agency that was allocated to before.
+    - From the above observation, we can try isolate each continuous streak of an agency with order, then use `DENSE_RANK()` to rank them. Note that we can't use `RANK()` as the ranking wouldn't be consecutive.
 
-- First, let's try using `ROW_NUMBER()` with and without partitions of __agency__ to see what's happening:
+3. First, let's try using `ROW_NUMBER()` with and without partitions of __agency__ to see what's happening:
 
 ```sql
-select *,
-	row_number() over(order by allocation_month) as rn1,
-	row_number() over(partition by agency order by allocation_month) as rn2
-from #value_change
-order by allocation_month
+select *, rn1-rn2 as gr1
+from (
+	select *,
+		row_number() over(order by allocation_month) as rn1,
+		row_number() over(partition by agency order by allocation_month) as rn2
+	from #value_change
+	) x
 ```
 
-We can see that if we take the difference between __rn1__ and __rn2__, the resulting column would include groups of agencies based on consecutive allocation, however the order is wrong compared with __allocation_month__. For example, in __allocation_month__ = '2021-06', the difference is 3, which is less than the immediate value before it (which is 4). 
+Output:
 
-We call this column of difference __gr1__. In that case, we can take the earliest __allocation_month__ of each group in __gr1__ by using `MIN()`, so that the order is correct. Also, for now let's not worry about formatting too much; we will simply nest the queries and show every newly calculated columns so that we can see the logic:
+| allocation_month | agency | rn1 | rn2 | gr1 |
+|------------------|--------|-----|-----|-----|
+| 2021-00          | A      | 1   | 1   | 0   |
+| 2021-01          | B      | 2   | 1   | 1   |
+| 2021-05          | B      | 6   | 2   | 4   |
+| 2021-02          | C      | 3   | 1   | 2   |
+| 2021-03          | C      | 4   | 2   | 2   |
+| 2021-04          | C      | 5   | 3   | 2   |
+| 2021-06          | C      | 7   | 4   | 3   |
+| 2021-07          | D      | 8   | 1   | 7   |
+| 2021-08          | D      | 9   | 2   | 7   |
+
+We can see that if we take the difference between __rn1__ and __rn2__ (which we would name __gr1__), the result would include groups of agencies based on consecutive allocation, however the order is wrong compared with __allocation_month__. For example, in __allocation_month__ = '2021-06', the difference is 3, which is less than the immediate value before it (which is 4). 
+
+4. To handle this, we can take the earliest __allocation_month__ of each group in __gr1__ by using `MIN()`, so that we can get the correct order. Also, for now let's not worry about formatting too much; we will simply nest the queries and show every newly calculated columns so that we can see the logic:
 
 ```sql
 select *, min(allocation_month) over(partition by agency, gr1) as gr2
 from (
-select *, rn1-rn2 as gr1
-from (
-select *,
-	row_number() over(order by allocation_month) as rn1,
-	row_number() over(partition by agency order by allocation_month) as rn2
-from #value_change) x) y
+	select *, rn1-rn2 as gr1
+	from (
+		select *,
+			row_number() over(order by allocation_month) as rn1,
+			row_number() over(partition by agency order by allocation_month) as rn2
+		from #value_change
+		) x
+	) y
 order by allocation_month
 ```
 
-Now that we have been able to group the consecutive streaks of agencies in the correct order, we can use `DENSE_RANK()` on the __gr2__ column to count the number of time the allocated agency is changed:
+Output:
+
+| allocation_month | agency | rn1 | rn2 | gr1 | gr2     |
+|------------------|--------|-----|-----|-----|---------|
+| 2021-00          | A      | 1   | 1   | 0   | 2021-00 |
+| 2021-01          | B      | 2   | 1   | 1   | 2021-01 |
+| 2021-05          | B      | 6   | 2   | 4   | 2021-05 |
+| 2021-02          | C      | 3   | 1   | 2   | 2021-02 |
+| 2021-03          | C      | 4   | 2   | 2   | 2021-02 |
+| 2021-04          | C      | 5   | 3   | 2   | 2021-02 |
+| 2021-06          | C      | 7   | 4   | 3   | 2021-06 |
+| 2021-07          | D      | 8   | 1   | 7   | 2021-07 |
+| 2021-08          | D      | 9   | 2   | 7   | 2021-07 |
+
+5. Now that we have been able to group the consecutive streaks of agencies in the correct order, we can use `DENSE_RANK()` on the __gr2__ column to count the number of time the allocated agency is changed:
 
 ```sql
 select *, dense_rank() over(order by gr2) as gr3
 from ( 
-select *, min(allocation_month) over(partition by agency, gr1) as gr2
-from (
-select *, rn1-rn2 as gr1
-from (
-select *,
-	row_number() over(order by allocation_month) as rn1,
-	row_number() over(partition by agency order by allocation_month) as rn2
-from #value_change) x) y) z
+	select *, min(allocation_month) over(partition by agency, gr1) as gr2
+	from (
+		select *, rn1-rn2 as gr1
+		from (
+			select *,
+				row_number() over(order by allocation_month) as rn1,
+				row_number() over(partition by agency order by allocation_month) as rn2
+			from #value_change
+			) x
+		) y
+	) z
 order by allocation_month
 ```
 
+Output:
 
+| allocation_month | agency | rn1 | rn2 | gr1 | gr2     | gr3 |
+|------------------|--------|-----|-----|-----|---------|-----|
+| 2021-00          | A      | 1   | 1   | 0   | 2021-00 | 1   |
+| 2021-01          | B      | 2   | 1   | 1   | 2021-01 | 2   |
+| 2021-02          | C      | 3   | 1   | 2   | 2021-02 | 3   |
+| 2021-03          | C      | 4   | 2   | 2   | 2021-02 | 3   |
+| 2021-04          | C      | 5   | 3   | 2   | 2021-02 | 3   |
+| 2021-05          | B      | 6   | 2   | 4   | 2021-05 | 4   |
+| 2021-06          | C      | 7   | 4   | 3   | 2021-06 | 5   |
+| 2021-07          | D      | 8   | 1   | 7   | 2021-07 | 6   |
+| 2021-08          | D      | 9   | 2   | 7   | 2021-07 | 6   |
+
+Now that we've gotten the final result in __gr3__ column, let's rewrite the query so that it looks neater:
+
+```sql
+select 
+	allocation_month,
+	agency, 
+	dense_rank() over(order by min_allocation_month) as count_change
+from ( 
+	select 
+		allocation_month,
+		agency, 
+		min(allocation_month) over(partition by agency, gr) as min_allocation_month
+	from (
+		select *,
+			row_number() over(order by allocation_month) - row_number() over(partition by agency order by allocation_month) as gr
+	from #value_change
+		) x
+	) y
+order by allocation_month
+```
+
+### 
 ## CTEs
 
 From Microsoft's documentation, CTEs can be used to:
