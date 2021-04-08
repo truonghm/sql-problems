@@ -66,12 +66,12 @@ where condition
 This is particularly useful when you want to compare e.g. rates from a previous period:
 
 ```sql
-select t1.*, t2.RFR as RFR_LM
+select t1.*, t2.rate as rate_lm
 from table t1, table t2
 where t1.Due_Date = dateadd(month, -1, t2.DUE_DATE)
 ```
 
-In this query I use the **Due_Date** column as the key to join. Current date is matched with the same date from last month (see the `DATEADD` function) to return the roll-forawrd rate from last month. A new column called **RFR_LM** (roll forward rate last month) is created, which can then be compared with the already-existed **RFR** column.
+In this query I use the **Due_Date** column as the key to join. Current date is matched with the same date from last month (see the `DATEADD` function) to return the rate from last month. A new column called **rate_lm** (the rate from last month) is created, which can then be compared with the already-existed **rate** column.
 
 ## Some problems related to window functions
 
@@ -89,7 +89,7 @@ In this query I use the **Due_Date** column as the key to join. Current date is 
 | 2021-08          | D      | 6            |
 | 2021-09          | D      | 6            |
 
-Supposely we are given the first 2 columns, which show the log of agencies that a contract is allocated to for debt collection, and has to create the third one called **no_of_change** which indicates the number of time the values changes over time (**day**).
+Supposely we are given the first 2 columns, which show the log of agencies that a contract is allocated to, and we has to create the third one called **count_change** which indicates the number of time the agancies are changed over time (**day**).
 
 This task requires the use of `DENSE_RANK()`, `ROW_NUMBER()` and `MIN()` as follows:
 
