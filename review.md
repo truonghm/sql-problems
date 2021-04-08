@@ -2,7 +2,7 @@
 
 ## Introduction
 
-In past 2 years, particularly during the months I was unemployed, I have realized that the hiring process for data analyst role is becoming increasingly technical. There are mainly two ways to test the applicant's technical ability that I have encountered:
+In the past 2 years, particularly during the months I was unemployed, I have realized that the hiring process for data analyst role is becoming increasingly technical. There are mainly two ways to test the applicant's technical ability that I have encountered:
 
 1. **Assignment/Testing**: Applicant is assigned a problem, which can either be done at home and submitted before a given deadline, or done on-site. The former is more common. Applicant can choose whichever tools they are comfortable with, as long as they can produce result. Methodology and domain knowledge are often valued more.
 
