@@ -2,15 +2,13 @@
 
 ## Introduction
 
-In past 2 years, particularly during the months I was unemployed, I have realized that the hiring process for data analyst role is becoming increasingly technical. There are mainly two ways to test the applicant technical ability that I have encountered:
+In past 2 years, particularly during the months I was unemployed, I have realized that the hiring process for data analyst role is becoming increasingly technical. There are mainly two ways to test the applicant's technical ability that I have encountered:
 
-1. **Assignment/Testing**: Applicant is assigned a data analysis problem, which can either be done at home and submitted before a given deadline, or done on-site. The former is more common. Applicant can choose whichever technologies they are comfortable with, as long as they can produce result. Methodology and domain knowledge are often valued more.
+1. **Assignment/Testing**: Applicant is assigned a problem, which can either be done at home and submitted before a given deadline, or done on-site. The former is more common. Applicant can choose whichever tools they are comfortable with, as long as they can produce result. Methodology and domain knowledge are often valued more.
 
 2. **Technical questions** given during interviews, which cover various topics: probability, statistics, SQL, Python, R, etc. You may be required to write your code on paper.
 
-This review is mainly about the 2nd method: technical questions, particularly SQL questions. I admit that I lack a formal education in database management/ETL, and thus heavily, and also willingly depend on Google and code completion instead of memorization. As such SQL questions can be scary. 
-
-I'm writing this review with the goal of becoming more proficient in SQL, at a level where I understand how SQL and databases work under the hood and begin to approach optimization, instead of just focusing on making queries work without error.
+This review is mainly beneficial for the 2nd method of testing, which is using technical questions, particularly SQL questions. I admit that I lack a formal education in database management/ETL, and thus heavily, and also willingly depend on Google and code completion. As such writing SQL on paper (not to mention in front of other people) can be scary. 
 
 ---
 ## Some notes on joining tables
