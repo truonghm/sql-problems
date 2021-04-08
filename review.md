@@ -263,7 +263,7 @@ ORDER BY
     date ASC
 ```
 
-Note that is is the preferred solution, as it's more efficient and shorter.
+Note that is is the preferred solution, as it's more efficient, shorter and more readable.
 
 __Solution 2__: Using join:
 
@@ -281,7 +281,7 @@ ORDER BY
     a.transaction_date
 ```
 
-Note that in the above solution, the condition for joining in the `ON` clause uses _equal or greater than_ comparison, as not only _equal_ comparison is legal when joining tables.
+Note that in the above solution, the condition for joining in the `ON` clause uses _equal or greater than_ comparison, which is perfectly legal when joining tables.
 
 ## Other interesting problems
 
@@ -311,7 +311,7 @@ Assuming the __report__ table is as below:
 Notice that the table has a few quirks:
 
 -  The __report_date__ column contains strings representing date in "YYYYMMDD" format, instead of actual dates.
--  There are a fixed number of __contract_id__ repeating through each day, and if there's no transaction for a particular contract on a particular day, the payment amount would be 0.
+-  There are a fixed number of contract IDs repeating through each day, and if there's no transaction for a particular contract on a particular day, the payment amount would be 0.
 
 And here's the solution:
 
