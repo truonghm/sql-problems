@@ -287,7 +287,7 @@ Note that in the above solution, the condition for joining in the `ON` clause us
 
 ### Find best previous performing month and fetch the same day as today from that month
 
-Recently I was assigned the following task: The performance report at my company (that I created and maintain) used to show comparison of current month and the previous month. However, as certain months are affected by holidays, it makes more sense to compare the current month with the best performing month in the past. The task can be broken down into 2 parts:
+Suppose we are given the following task: The performance report used to show comparison of current month and the previous month. However, as certain months are affected by holidays, it makes more sense to compare the current month with the best performing month in the past. The task can be broken down into 2 parts:
 
 1. Find the best previous performing month, e.g. December 2020, and compare with the current month, e.g. April 2021
 2. Besides total monthly numbers, we also show daily numbers. This mean that we need to fetch data for December 7, 2021, assuming that the current reporting date is April 7, 2021, and compare those 2 dates.
@@ -311,7 +311,7 @@ Assuming the __report__ table is as below:
 Notice that the table has a few quirks:
 
 -  The __report_date__ column contains strings representing date in "YYYYMMDD" format, instead of actual dates.
--  There are a fixed number of contract IDs repeating through each day, and if there's no transaction for a particular contract on a particular day, the payment amount would be 0.
+-  There are a fixed number of contract IDs repeating through each day, and if there's no transaction for a particular contract on a particular day, the payment amount would be `NULL`.
 
 And here's the solution:
 
