@@ -85,9 +85,11 @@ In this query I use the **Due_Date** column as the key to join. Current date is 
 | 2021-02          | B      | 2            |
 | 2021-03          | C      | 3            |
 | 2021-04          | C      | 3            |
-| 2021-05          | B      | 4            |
-| 2021-06          | D      | 5            |
-| 2021-07          | D      | 5            |
+| 2021-05          | C      | 3            |
+| 2021-06          | B      | 4            |
+| 2021-07          | C      | 5            |
+| 2021-08          | D      | 6            |
+| 2021-09          | D      | 6            |
 
 Supposely we are given the first 2 columns, which show the log of agencies that a contract is allocated to for debt collection, and has to create the third one called **no_of_change** which indicates the number of time the values changes over time (**day**).
 
@@ -104,15 +106,15 @@ agency varchar(1) null
 )
 
 -- Inserting Records
-insert into #value_change values('2021-00','A')
-insert into #value_change values('2021-01','B')
-insert into #value_change values('2021-02','C')
+insert into #value_change values('2021-01','A')
+insert into #value_change values('2021-02','B')
 insert into #value_change values('2021-03','C')
 insert into #value_change values('2021-04','C')
-insert into #value_change values('2021-05','B')
-insert into #value_change values('2021-06','C')
-insert into #value_change values('2021-07','D')
+insert into #value_change values('2021-05','C')
+insert into #value_change values('2021-06','B')
+insert into #value_change values('2021-07','C')
 insert into #value_change values('2021-08','D')
+insert into #value_change values('2021-09','D')
 ```
 
 2. There are several things we have to be aware of in this problem: 
