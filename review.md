@@ -350,3 +350,13 @@ The steps in the above query can be explained as follows:
 4. Find the BOM date of the best performing previous month
 5. Calculate the difference in months between the BOM of the current reporting month and the BOM of the best performing previous month
 6. Substract the difference in months as calculated above from the last reporting date to get the corresponding date from the best performing previous month
+
+## Miscellaneous stuff
+
+### `<>` vs. `!=`
+
+In SQL Server, we can use `<>` and `!=` interchangably. However, `<>` is defined in the [ANSI 99 SQL standard](http://web.cecs.pdx.edu/~len/sql1999.pdf) and `!=` is not. So not all DB engines may support it and if we want to generate portable code it's recommended to use `<>`.
+
+---
+
+To be continued.
