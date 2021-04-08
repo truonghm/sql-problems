@@ -10,11 +10,14 @@ In the past 2 years, particularly during the months I was unemployed, I have rea
 
 This review is mainly beneficial for the 2nd method of testing, which is using technical questions, particularly SQL questions. I admit that I lack a formal education in database management/ETL, and thus heavily, and also willingly depend on Google and code completion. As such writing SQL on paper (not to mention in front of other people) can be scary. 
 
+This review will be maintained and updated regularly as I come across more interesting problems.
+
 ---
 ## Some notes on joining tables
 
 ### Specifying conditions when joining
-the usual way of joining tables is:
+
+The usual way of joining tables is:
 
 ```sql
 select *
