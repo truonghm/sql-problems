@@ -294,9 +294,26 @@ Recently I was assigned the following task: The performance report at my company
 
 Assuming the __report__ table is as below:
 
+| contract_id | report_date | daily_payment | accumulated_payment |
+|-------------|-------------|---------------|---------------------|
+| 1           | 20201001    | 1000          | 1000                |
+| 2           | 20201001    | 2000          | 2000                |
+| ...         | ...         |               | ...                 |
+| 1           | 20201002    | NULL          | 1000                |
+| 2           | 20201002    | NULL          | 2000                |
+| ...         | ...         |               | ...                 |
+| 1           | 20201003    | 2103          | 3103                |
+| 2           | 20201003    | 2301          | 4301                |
+| ...         | ...         |               | ...                 |
+| 1           | 20201004    | 2212          | 5315                |
+| 2           | 20201004    | 3465          | 7766                |
 
+Notice that the table has a few quirks:
 
-Here's my solution:
+-  The __report_date__ column contains strings representing date in "YYYYMMDD" format, instead of actual dates.
+-  There are a fixed number of __contract_id__ repeating through each day, and if there's no transaction for a particular contract on a particular day, the payment amount would be 0.
+
+And here's the solution:
 
 ```sql
 DECLARE @max_report_date varchar(8) = (select max(report_date) from report)
@@ -306,7 +323,7 @@ DECLARE @max_value_date varchar(8) = (
 			from (
 				select 
 					report_date,
-					isnull(sum(mtd_pmt),0) as payment_amt
+					isnull(sum(accumulated_payment),0) as payment_amt
 				from report
 				where Report_date in (
 								select left(report_date, 4) + substring(report_date, 5, 2) + right('0'+ cast(max(cast(right(report_date, 2) as int)) as varchar(max)), 2)
